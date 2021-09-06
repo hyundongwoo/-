@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+<!--    폰트 스타일-->
+    <link href="https://fonts.googleapis.com/css2?family=Hi+Melody&display=swap" rel="stylesheet">
+
+    <title>homework</title>
+    <meta property="og:title" content="one page" />
+    <meta property="og:description" content="firts web" />
+    <meta property="og:image" content="{{ url_for('static', filename='ogimage.png') }}" />
+
+    <style>
+        *{
+            font-family: 'Hi Melody', cursive;
+        }
+
+        .wrap{
+            width: 500px;
+            margin: auto;
+            padding-top: 100px;
+        }
+
+        .img{
+            width: 500px;
+            height: 350px;
+            background-image: url("http://www.ilsan.co.kr/data/goodsImages/GOODS2_1347879246");
+            background-size: cover;
+            background-position:center ;
+        }
+
+        #button{
+            display: block;
+
+            margin: 0px auto 20px auto;
+        }
+
+    </style>
+    <script>
+        $(document).ready(function () {
+            q1()
+        });
+         function q1() {
+                    $.ajax({
+                type: "GET",
+                url: "http://spartacodingclub.shop/sparta_api/rate",
+                data: {},
+                success: function (response) {
+                    let won = response['rate']
+                    $('#wonwon').append(won)
+                }
+            })
+      }
+
+
+
+
+        $(document).ready(function () {
+            showArticles();
+        });
+
+
+
+        function postArticle() {
+            let order_name = $('#order_name').val()
+            let order_count = $('#order_count').val()
+            let order_address = $('#order_address').val()
+            let order_phone = $('#order_phone').val()
+
+
+            $.ajax({
+                type: "POST",
+                url: "/order",
+                data: {name_give:order_name,count_give:order_count,address_give:order_address,phone_give:order_phone},
+                success: function (response) { // 성공하면
+                    alert(response["msg"]);
+                    window.location.reload()
+                }
+            })
+        }
+
+        function showArticles() {
+            $.ajax({
+                type: "GET",
+                url: "/order",
+                data: {},
+                success: function (response) {
+                    let order_list = response['all_order_list']
+                        for(let i=0; i<order_list.length;i++){
+                            let name = order_list[i]['name']
+                            let count = order_list[i]['count']
+                            let address = order_list[i]['address']
+                            let phone = order_list[i]['phone']
+
+                                let temp_html=` <tr>
+                                                    <td>${name}</td>
+                                                    <td>${count}</td>
+                                                    <td>${address}</td>
+                                                    <td>${phone}</td>
+                                                </tr>`
+
+                                $('#order-box').append(temp_html)
+                        }
+                }
+            })
+        }
+    </script>
+</head>
+
+<body>
+    <div class="wrap">
+<!--이미지-->
+        <div class="img">
+
+        </div>
+<!--제품설명        -->
+        <h1>근적외선히터 <span style="font-size: 20px">가격:30,000원/개</span> </h1>
+        <p>골프연습장용<br>
+
+        색상 : 기본백색<br>
+        전압 : 220V / 60HZ<br>
+        소비전력 : 2000W<br>
+        외형재질 : 알미늄다이케스팅<br>
+        램프 : 필립스<br>
+        크기 : W-520mm, H-145mm, D-120mm (망포함),(뒤고리미포함)
+        </p>
+        <h5 id="wonwon" style="color: blue" style="font-style: italic">달러-원 환률: </h5>
+<!--주문상세내용-->
+        <div>
+            <div class="input-group mb-3">
+                <span class="input-group-text">주문자이름</span>
+                <input type="text" class="form-control" id="order_name">
+
+            </div>
+            <div class="input-group mb-3">
+                <label class="input-group-text">수량</label>
+                <select class="form-select form-control" id="order_count">
+                    <option selected >---수량을 선택하세요.---</option>
+                    <option value="1">One</option>
+                    <option value="2">Two</option>
+                    <option value="3">Three</option>
+                </select>
+            </div>
+            <div class="input-group mb-3">
+                <span class="input-group-text">주소</span>
+                <input type="text" class="form-control" id="order_address">
+            </div>
+            <div class="input-group mb-3">
+                <span class="input-group-text">전화번호</span>
+                <input type="text" class="form-control" id="order_phone">
+            </div>
+            <button onclick="postArticle()"  type="button" class="btn btn-primary"  id="button">
+                주문하기</button>
+
+
+        </div>
+
+            <div class="reviews">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th scope="col">이름</th>
+                        <th scope="col">수량</th>
+                        <th scope="col">주소</th>
+                        <th scope="col">전화번호</th>
+                    </tr>
+                    </thead>
+                    <tbody id="order-box">
+
+                    </tbody>
+                </table>
+            </div>
+
+
+
+
+
+    </div>
+</body>
+
+</html>
